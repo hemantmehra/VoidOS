@@ -25,6 +25,9 @@ int main() {
 
     printf("Minimal Shell Init Started\n");
 
+    // Set a default PATH environment variable
+    setenv("PATH", "/bin:/sbin:/usr/bin:/usr/sbin", 1);
+
     while (1) {
         printf("> ");
         fflush(stdout);
