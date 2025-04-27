@@ -22,6 +22,7 @@ void parse_input(char *input, char *args[]) {
 int main() {
     char input[MAX_LINE];
     char *args[MAX_ARGS];
+    char cwd[256];
 
     printf("Minimal Shell Init Started\n");
 
@@ -29,7 +30,11 @@ int main() {
     setenv("PATH", "/bin:/sbin:/usr/bin:/usr/sbin", 1);
 
     while (1) {
-        printf("> ");
+        if (getcwd(cwd, sizeof(cwd)) != NULL) {
+            printf("%s> ", cwd);
+        } else {
+            printf("> ");
+        }
         fflush(stdout);
 
         if (fgets(input, sizeof(input), stdin) == NULL) {
@@ -41,6 +46,28 @@ int main() {
         }
 
         parse_input(input, args);
+
+        if (args[0] == NULL) {
+            continue;
+        }
+
+        // Built-in "exit" command
+        if (strcmp(args[0], "exit") == 0) {
+            printf("Exiting shell...\n");
+            break;
+        }
+
+        // Built-in "cd" command
+        if (strcmp(args[0], "cd") == 0) {
+            if (args[1] == NULL) {
+                fprintf(stderr, "cd: missing argument\n");
+            } else {
+                if (chdir(args[1]) != 0) {
+                    perror("cd");
+                }
+            }
+            continue; // don't fork
+        }
 
         pid_t pid = fork();
         if (pid == 0) {
