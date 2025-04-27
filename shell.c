@@ -69,6 +69,22 @@ int main() {
             continue; // don't fork
         }
 
+        // Built-in "pwd"
+        if (strcmp(args[0], "pwd") == 0) {
+            if (getcwd(cwd, sizeof(cwd)) != NULL) {
+                printf("%s\n", cwd);
+            } else {
+                perror("getcwd");
+            }
+            continue; // No need to fork
+        }
+
+        if (strcmp(args[0], "clear") == 0) {
+            printf("\033[2J\033[H");
+            fflush(stdout);
+            continue; // No need to fork
+        }
+
         pid_t pid = fork();
         if (pid == 0) {
             // child
