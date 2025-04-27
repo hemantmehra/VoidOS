@@ -2,7 +2,7 @@
 
 CC = gcc
 CFLAGS = -Os
-TARGET = echo_init
+TARGET = shell
 INITRAMFS = initramfs.cpio.gz
 ROOTFS_DIR = rootfs
 KERNEL = linux-6.14.4/arch/x86/boot/bzImage
@@ -12,8 +12,8 @@ QEMU_FLAGS = -kernel $(KERNEL) -initrd $(INITRAMFS) -nographic -append "console=
 
 all: $(INITRAMFS)
 
-$(TARGET): echo_init.c
-	$(CC) $(CFLAGS) -o $(TARGET) echo_init.c
+$(TARGET): shell.c
+	$(CC) $(CFLAGS) -o $(TARGET) shell.c
 
 $(ROOTFS_DIR)/init: $(TARGET)
 	mkdir -p $(ROOTFS_DIR)/dev
