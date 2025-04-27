@@ -2,7 +2,8 @@
 
 CC = gcc
 CFLAGS = -Os
-TARGET = shell
+TARGET = shell.o
+HELLO = hello.o
 INITRAMFS = initramfs.cpio.gz
 ROOTFS_DIR = rootfs
 KERNEL = linux-6.14.4/arch/x86/boot/bzImage
@@ -15,9 +16,14 @@ all: $(INITRAMFS)
 $(TARGET): shell.c
 	$(CC) $(CFLAGS) -o $(TARGET) shell.c
 
-$(ROOTFS_DIR)/init: $(TARGET)
+$(HELLO): hello.c
+	$(CC) $(CFLAGS) -o $(HELLO) hello.c
+
+$(ROOTFS_DIR)/init: $(TARGET) $(HELLO)
 	mkdir -p $(ROOTFS_DIR)/dev
+	mkdir -p $(ROOTFS_DIR)/bin
 	cp $(TARGET) $(ROOTFS_DIR)/init
+	cp $(HELLO) $(ROOTFS_DIR)/bin/hello
 	sudo mknod -m 600 $(ROOTFS_DIR)/dev/console c 5 1 || true
 	$(MAKE) copy_libs
 
